@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Your Prompt</h3>
+  <p>{{ prompt.prompt }}</p>
+  <h3>Generated Caption</h3>
+  <div class="alert alert-success">
+    {{ prompt.generated_caption }}
+  </div>
+  <a href="{% url 'generateCaption' %}" class="btn btn-secondary">Try another</a>
+</div>
+{% endblock %}
