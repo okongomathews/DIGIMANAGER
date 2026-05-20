@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h2>🎯 AI Caption Generator</h2>
+
+<form method="post" id="captionForm">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" id="genBtn" type="submit">Generate Caption</button>
+    <div id="loading" style="display:none;">⏳ Generating...</div>
+</form>
+
+{% if caption %}
+    <div class="mt-4 p-3 border bg-light">
+        <h4>🧠 AI-Generated Caption</h4>
+        <p>{{ caption.generated_caption }}</p>
+        <small>Status: {{ caption.status }}</small>
+    </div>
+{% endif %}
+
+<script>
+    const form = document.getElementById('captionForm');
+    const loading = document.getElementById('loading');
+    const btn = document.getElementById('genBtn');
+
+    form.addEventListener('submit', () => {
+        btn.disabled = true;
+        loading.style.display = 'block';
+    });
+</script>
+
+{% endblock %}
