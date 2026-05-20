@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Manager Dashboard</h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card border-danger mb-3">
+        <div class="card-header bg-danger text-white">Approve Posts</div>
+        <div class="card-body">
+          <p>Review and approve content from creators before it goes live.</p>
+          <a href="{% url 'approvePosts' %}" class="btn btn-danger btn-sm">Review Content</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card border-success mb-3">
+        <div class="card-header bg-success text-white">Analytics</div>
+        <div class="card-body">
+          <p>Track engagement and content performance across platforms.</p>
+          <a href="{% url 'analyticsDashboard' %}" class="btn btn-success btn-sm">View Analytics</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
