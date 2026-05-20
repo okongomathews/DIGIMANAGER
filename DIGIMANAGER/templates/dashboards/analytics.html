@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">📊 Analytics Dashboard</h2>
+
+  <!-- Main Charts -->
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <h5 class="card-title text-center">Post Status Distribution</h5>
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <h5 class="card-title text-center">Monthly Post Trends</h5>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform-Specific Charts -->
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <h5 class="card-title text-center">Platform Post Distribution</h5>
+        <canvas id="platformChart"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
+        <h5 class="card-title text-center">Platform Post Trends</h5>
+        <canvas id="platformTrendsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Future Placeholder Cards -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">🔄 Top Platforms (Coming Soon)</h6>
+        <p class="text-secondary">Analytics for platform-wise performance will be shown here.</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">👤 Active Creators (Coming Soon)</h6>
+        <p class="text-secondary">You'll soon see the most productive content creators.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden JSON-safe data for Chart.js -->
+  {{ status_labels|json_script:"status-labels" }}
+  {{ status_values|json_script:"status-values" }}
+
+  {{ month_labels|json_script:"month-labels" }}
+  {{ month_data|json_script:"month-data" }}
+
+  {{ platform_labels|json_script:"platform-labels" }}
+  {{ platform_counts|json_script:"platform-counts" }}
+
+  {{ platform_trend_labels|json_script:"platform-trend-labels" }}
+  {{ platform_trend_data|json_script:"platform-trend-data" }}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Parse injected data
+  const statusLabels = JSON.parse(document.getElementById('status-labels').textContent);
+  const statusValues = JSON.parse(document.getElementById('status-values').textContent);
+
+  const monthLabels = JSON.parse(document.getElementById('month-labels').textContent);
+  const monthData = JSON.parse(document.getElementById('month-data').textContent);
+
+  const platformLabels = JSON.parse(document.getElementById('platform-labels').textContent);
+  const platformCounts = JSON.parse(document.getElementById('platform-counts').textContent);
+
+  const platformTrendLabels = JSON.parse(document.getElementById('platform-trend-labels').textContent);
+  const platformTrendData = JSON.parse(document.getElementById('platform-trend-data').textContent); // Dict: {platform: [count1, count2...]}
+
+  // Status Chart (Pie)
+  new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+      labels: statusLabels,
+      datasets: [{
+        label: 'Post Statuses',
+        data: statusValues,
+        backgroundColor: ['#007bff', '#ffc107', '#28a745', '#dc3545'],
+        borderColor: '#fff',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+
+  // Monthly Chart (Bar)
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [{
+        label: 'Posts Created',
+        data: monthData,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0,
+            stepSize: 1
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+
+  // Platform Distribution (Pie)
+  new Chart(document.getElementById('platformChart'), {
+    type: 'doughnut',
+    data: {
+      labels: platformLabels,
+      datasets: [{
+        label: 'Posts per Platform',
+        data: platformCounts,
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#20c997'],
+        borderColor: '#fff',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+
+  // Platform Trends (Line Chart with multiple lines)
+  const platformDatasets = Object.entries(platformTrendData).map(([platform, counts], index) => ({
+    label: platform,
+    data: counts,
+    fill: false,
+    borderColor: ['#007bff', '#ffc107', '#28a745', '#dc3545'][index % 4],
+    tension: 0.3
+  }));
+
+  new Chart(document.getElementById('platformTrendsChart'), {
+    type: 'line',
+    data: {
+      labels: platformTrendLabels,
+      datasets: platformDatasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}
