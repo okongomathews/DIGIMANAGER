@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Admin Dashboard</h2>
+
+  <div class="row">
+    <!-- Manage Users -->
+    <div class="col-md-4">
+      <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">Manage Users</div>
+        <div class="card-body">
+          <p>Register or deactivate users, assign roles, and view user statistics.</p>
+          <a href="{% url 'admin:scheduler_customuser_changelist' %}" class="btn btn-primary btn-sm">Go to User Management</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="col-md-4">
+      <div class="card border-success mb-3">
+        <div class="card-header bg-success text-white">View Analytics</div>
+        <div class="card-body">
+          <p>View content performance, engagement metrics, and platform statistics.</p>
+          <a href="{% url 'analyticsDashboard' %}" class="btn btn-success btn-sm">View Analytics</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Settings -->
+    <div class="col-md-4">
+      <div class="card border-info mb-3">
+        <div class="card-header bg-info text-white">Platform Settings</div>
+        <div class="card-body">
+          <p>Configure platforms and schedule automation.</p>
+          <a href="{% url 'managePlatforms' %}" class="btn btn-info btn-sm">Manage Platforms</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Reports -->
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card border-warning mb-3">
+        <div class="card-header bg-warning text-dark">📄 Export Reports</div>
+        <div class="card-body">
+          <p>Download all post data in Excel or PDF format for review or backups.</p>
+          <a href="{% url 'export_posts_excel' %}" class="btn btn-outline-success me-2">📤 Export to Excel</a>
+          <a href="{% url 'export_posts_pdf' %}" class="btn btn-outline-danger">📄 Export to PDF</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future Feature -->
+    <div class="col-md-6">
+      <div class="card border-secondary mb-3">
+        <div class="card-header bg-secondary text-white">📌 Quick Stats (Coming Soon)</div>
+        <div class="card-body">
+          <p>Quick insights on top platforms, post engagement, and active users will be added here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
