@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Creator Dashboard{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Content Creator Dashboard</h2>
+
+  <div class="row">
+    <!-- Create New Post -->
+    <div class="col-md-6 mb-3">
+      <div class="card border-secondary">
+        <div class="card-header bg-secondary text-white">Create New Post</div>
+        <div class="card-body">
+          <p>Generate captions and schedule your social media content with AI assistance.</p>
+          <a href="{% url 'createPost' %}" class="btn btn-secondary btn-sm">Create Post</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Posts -->
+    <div class="col-md-6 mb-3">
+      <div class="card border-warning">
+        <div class="card-header bg-warning text-dark">My Posts</div>
+        <div class="card-body">
+          <p>View, edit or delete your drafts and scheduled posts.</p>
+          <a href="{% url 'myPosts' %}" class="btn btn-warning btn-sm">Manage Posts</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display Recent 3 Posts Table -->
+  <div class="card border-info mt-4">
+    <div class="card-header bg-info text-white">Your Recent Posts</div>
+    <div class="card-body p-0">
+      {% if posts %}
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Scheduled Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for post in posts|slice:":3" %}
+              <tr>
+                <td>{{ post.title }}</td>
+                <td>
+                  <span class="badge 
+                    {% if post.status == 'draft' %}bg-secondary
+                    {% elif post.status == 'scheduled' %}bg-warning
+                    {% elif post.status == 'approved' %}bg-success
+                    {% elif post.status == 'published' %}bg-primary
+                    {% else %}bg-dark{% endif %}">
+                    {{ post.status }}
+                  </span>
+                </td>
+                <td>{{ post.scheduled_time|default:"—" }}</td>
+                <td>
+                  <a href="{% url 'viewPost' post.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                  <a href="{% url 'editPost' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <form method="POST" action="{% url 'deletePost' post.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this post?');">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="p-3">You haven’t created any posts yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
