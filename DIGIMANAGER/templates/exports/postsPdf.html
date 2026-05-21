@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Helvetica, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 6px; border: 1px solid #ccc; }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h2>DigiManager - Posts Report</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Platform</th>
+                <th>Status</th>
+                <th>Scheduled Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr>
+                <td>{{ post.id }}</td>
+                <td>{{ post.user.username }}</td>
+                <td>{{ post.platform.name }}</td>
+                <td>{{ post.status|title }}</td>
+                <td>{{ post.scheduled_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
