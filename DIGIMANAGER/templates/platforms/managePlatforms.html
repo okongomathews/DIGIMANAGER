@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h2>Manage Platforms</h2>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<form method="post" class="mt-3 mb-4">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Add Platform</button>
+</form>
+
+<h4>Your Platforms</h4>
+<ul class="list-group">
+    {% for platform in platforms %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ platform.name|title }}</strong><br>
+                <small>Added: {{ platform.created_at|date:"M d, Y" }}</small><br>
+                {% if platform.expires_in %}
+                    <small>Expires In: {{ platform.expires_in }} seconds</small><br>
+                {% endif %}
+                <small>Access Token: {{ platform.access_token|truncatechars:40 }}</small><br>
+                {% if platform.refresh_token %}
+                    <small>Refresh Token: {{ platform.refresh_token|truncatechars:40 }}</small>
+                {% endif %}
+            </div>
+            <div>
+                <a href="{% url 'editPlatform' platform.id %}" class="btn btn-sm btn-info">Edit</a>
+                <a href="{% url 'deletePlatform' platform.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No platforms added yet.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
