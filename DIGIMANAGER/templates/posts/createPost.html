@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Create and Schedule a New Post</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <!-- Form Side -->
+      <div class="col-md-6">
+        {{ form|crispy }}
+
+        <!-- Hidden field to hold AI-generated image URL -->
+        <input type="hidden" name="ai_image_url" id="ai-image-url" value="">
+
+        <!-- AI Image Generator Controls -->
+        <div class="form-group mt-3">
+          <label for="model-select">Choose AI Model:</label>
+          <select id="model-select" class="form-control">
+            <option value="dalle">DALL·E</option>
+            <option value="stablediffusion">Stable Diffusion</option>
+            <option value="deepai">DeepAI</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-outline-info mt-2" id="generate-image-btn">
+          Generate Image with AI
+        </button>
+
+        <button type="submit" class="btn btn-primary mt-3">Save Draft</button>
+      </div>
+
+      <!-- Live Preview Side -->
+      <div class="col-md-6">
+        <div class="card border-info">
+          <div class="card-header bg-info text-white">Live Preview</div>
+          <div class="card-body">
+            <h5 class="card-title" id="preview-caption">Your caption will appear here...</h5>
+            <img id="preview-image" src="#" alt="Image Preview" class="img-fluid d-none mt-3"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Scripts -->
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const captionInput = document.getElementById("id_content");
+    const imageInput = document.getElementById("id_image");
+    const previewCaption = document.getElementById("preview-caption");
+    const previewImage = document.getElementById("preview-image");
+    const generateBtn = document.getElementById("generate-image-btn");
+    const modelSelect = document.getElementById("model-select");
+    const hiddenImageField = document.getElementById("ai-image-url");
+
+    // Live caption preview
+    if (captionInput) {
+      captionInput.addEventListener("input", () => {
+        previewCaption.textContent = captionInput.value || "Your caption will appear here...";
+      });
+    }
+
+    // Image preview if uploaded manually
+    if (imageInput) {
+      imageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            previewImage.src = e.target.result;
+            previewImage.classList.remove("d-none");
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewImage.classList.add("d-none");
+        }
+      });
+    }
+
+    // Generate image with AI
+    generateBtn.addEventListener("click", () => {
+      const caption = captionInput.value;
+      const model = modelSelect.value;
+
+      if (!caption) {
+        alert("Please enter post content before generating an image.");
+        return;
+      }
+
+      generateBtn.disabled = true;
+      generateBtn.textContent = "Generating...";
+
+      fetch("{% url 'generate_ai_image' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrftoken,
+        },
+        body: new URLSearchParams({
+          caption: caption,
+          model: model
+        })
+      })
+      .then(async response => {
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error("Server Error: " + errorText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.image_url) {
+          previewImage.src = data.image_url;
+          previewImage.classList.remove("d-none");
+
+          // Set the hidden input value
+          hiddenImageField.value = data.image_url;
+        } else {
+          alert(data.error || "Image generation failed.");
+        }
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+        alert("Image generation failed: " + error.message);
+      })
+      .finally(() => {
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate Image with AI";
+      });
+    });
+  });
+</script>
+
+<style>
+  #preview-caption {
+    font-style: italic;
+    font-size: 1.2rem;
+  }
+</style>
+{% endblock %}
