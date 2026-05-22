@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header">
+      <h4>View Post</h4>
+    </div>
+    <div class="card-body">
+      <p><strong>Caption:</strong> {{ post.caption }}</p>
+      <p><strong>Platform:</strong> {{ post.platform.name }}</p>
+      <p><strong>Status:</strong> {{ post.status }}</p>
+      <p><strong>Scheduled Time:</strong> {{ post.scheduled_time }}</p>
+      {% if post.image %}
+        <p><img src="{{ post.image.url }}" class="img-fluid rounded" style="max-width: 400px;" /></p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
