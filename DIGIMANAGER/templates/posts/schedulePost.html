@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Schedule Post{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Schedule Post: "{{ post.content|truncatechars:50 }}"</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success">Schedule</button>
+    <a href="{% url 'creatorDashboard' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
