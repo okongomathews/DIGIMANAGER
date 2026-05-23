@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Your Caption History</h2>
+  <table class="table table-striped table-bordered mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Prompt</th>
+        <th>Generated Caption</th>
+        <th>Platform</th>
+        <th>Tone</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cap in captions %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ cap.prompt|truncatewords:10 }}</td>
+        <td>{{ cap.generated_caption|truncatewords:12 }}</td>
+        <td>{{ cap.platform.name }}</td>
+        <td><span class="badge bg-info">{{ cap.tone|title }}</span></td>
+        <td>{{ cap.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
