@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Generate AI Caption</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success mt-2">Generate Caption</button>
+  </form>
+
+  {% if caption %}
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Generated Caption</h5>
+        <p>{{ caption.generated_caption }}</p>
+        <p><span class="badge bg-primary">{{ caption.tone|title }}</span> |
+           <strong>Platform:</strong> {{ caption.platform.name }} |
+           <small class="text-muted">{{ caption.timestamp }}</small></p>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
