@@ -83,9 +83,9 @@ WSGI_APPLICATION = 'DIGIMANAGER.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DIGIMANAGER',
-        'USER' : 'root',
-        'PASSWORD' : 'p9ssword',
+        'NAME': '',
+        'USER' : '',
+        'PASSWORD' : '',
         'HOST' : 'localhost',
         'PORT' : '3306',
     }
