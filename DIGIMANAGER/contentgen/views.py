@@ -20,7 +20,7 @@ def generateCaption(request):
             generated = captionGenerator(tone_prefix + obj.prompt, max_length=50, num_return_sequences=1)
             obj.generated_caption = generated[0]['generated_text']
             obj.save()
-            return redirect('captionDetail', obj.id)
+            return redirect('contentgen_captionDetail', obj.id)
     else:
         form = ContentPromptForm()
     return render(request, 'contentgen/generateCaption.html', {'form': form})
