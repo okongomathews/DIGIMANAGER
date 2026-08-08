@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Security Center · DigiManager{% endblock %}
+{% block page_title %}Security Center{% endblock %}
+{% block page_subtitle %}Full audit trail and authentication monitoring{% endblock %}
+
+{% block content %}
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fdeaea;color:var(--rose);">🚨</div>
+    <div class="kpi-value">{{ failed_last_30 }}</div>
+    <div class="kpi-label">Failed logins (last 30 min)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:var(--indigo-100);color:var(--indigo-600);">📜</div>
+    <div class="kpi-value">{{ page_obj.paginator.count }}</div>
+    <div class="kpi-label">Total audit entries</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fff3df;color:var(--amber);">🔐</div>
+    <div class="kpi-value">{{ recent_failed_logins|length }}</div>
+    <div class="kpi-label">Recent failed attempts shown</div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="section-heading" style="margin-top:34px;"><h2>Recent failed logins</h2></div>
+    <div class="card-surface" style="overflow:hidden;">
+      <table class="data-table">
+        <thead><tr><th>User</th><th>IP</th><th>When</th></tr></thead>
+        <tbody>
+          {% for attempt in recent_failed_logins %}
+          <tr>
+            <td>{{ attempt.username }}</td>
+            <td class="mono" style="font-size:0.78rem;">{{ attempt.ip_address|default:"—" }}</td>
+            <td>{{ attempt.created_at|timesince }} ago</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="text-center text-muted py-4">No failed attempts recorded.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="section-heading" style="margin-top:34px;">
+      <h2>Audit trail</h2>
+    </div>
+    <form method="get" class="d-flex gap-2 mb-3">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search by username…" class="form-control form-control-sm" style="max-width:220px;">
+      <select name="action" class="form-select form-select-sm" style="max-width:220px;">
+        <option value="">All actions</option>
+        {% for value, label in action_choices %}
+          <option value="{{ value }}" {% if value == active_filter %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-outline-secondary btn-sm">Filter</button>
+    </form>
+
+    <div class="card-surface" style="overflow:hidden;">
+      <table class="data-table">
+        <thead><tr><th>When</th><th>Account</th><th>Action</th><th>Path</th><th>IP</th></tr></thead>
+        <tbody>
+          {% for log in page_obj %}
+          <tr>
+            <td class="mono" style="font-size:0.78rem;white-space:nowrap;">{{ log.created_at|date:"M j, H:i:s" }}</td>
+            <td>{{ log.username_snapshot|default:"—" }}</td>
+            <td><span class="badge-soft">{{ log.get_action_display }}</span></td>
+            <td class="mono" style="font-size:0.78rem;">{{ log.method }} {{ log.path|truncatechars:30 }}</td>
+            <td class="mono" style="font-size:0.78rem;">{{ log.ip_address|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No audit entries yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="d-flex gap-2 mt-3">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.previous_page_number }}">← Prev</a>
+      {% endif %}
+      <span class="align-self-center text-muted" style="font-size:0.85rem;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a class="btn btn-sm btn-outline-secondary" href="?page={{ page_obj.next_page_number }}">Next →</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
+{% block title %}Delete Platform · DigiManager{% endblock %}
+{% block page_title %}Delete Platform{% endblock %}
+{% block page_subtitle %}This cannot be undone{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h3>Delete Platform</h3>
-    <p>Are you sure you want to delete <strong>{{ platform.name|title }}</strong>?</p>
-
+<div class="card-surface p-4" style="max-width:480px;">
+    <p>Are you sure you want to delete <strong>{{ platform.name|title }}</strong>? Scheduled posts on this platform will fail to publish.</p>
     <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-        <a href="{% url 'managePlatforms' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="background:var(--rose);border-color:var(--rose);">Yes, delete</button>
+        <a href="{% url 'managePlatforms' %}" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

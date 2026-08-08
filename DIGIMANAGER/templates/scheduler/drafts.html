@@ -1,28 +1,24 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% block title %}Drafts · DigiManager{% endblock %}
+{% block page_title %}My Drafts{% endblock %}
+{% block page_subtitle %}Unpublished, unscheduled work in progress{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">📝 My Drafts</h2>
-
-  {% if drafts %}
-    <div class="row">
-      {% for draft in drafts %}
-        <div class="col-md-6 mb-4">
-          <div class="card shadow-sm border-left-warning">
-            <div class="card-body">
-              <h5 class="card-title">Draft for {{ draft.platform.name }}</h5>
-              <p class="card-text"><strong>Caption:</strong> {{ draft.caption|truncatechars:100 }}</p>
-              <p class="card-text text-muted"><small>Created at: {{ draft.created_at|date:"M d, Y H:i" }}</small></p>
-              <a href="{% url 'editPost' draft.id %}" class="btn btn-sm btn-outline-primary">✏️ Edit</a>
-              <a href="{% url 'deletePost' draft.id %}" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
+{% if drafts %}
+<div class="row g-3">
+  {% for draft in drafts %}
+    <div class="col-md-6">
+      <div class="card-surface p-4 h-100">
+        <div class="badge-soft mb-2">{{ draft.platform.get_name_display }}</div>
+        <p style="font-size:0.9rem;">{{ draft.content|truncatechars:100 }}</p>
+        <p class="text-muted" style="font-size:0.78rem;">Created {{ draft.created_at|date:"M d, Y H:i" }}</p>
+        <a href="{% url 'editPost' draft.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        <a href="{% url 'deletePost' draft.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+      </div>
     </div>
-  {% else %}
-    <div class="alert alert-info">You have no saved drafts.</div>
-  {% endif %}
+  {% endfor %}
 </div>
+{% else %}
+<div class="card-surface p-5 text-center text-muted">You have no saved drafts.</div>
+{% endif %}
 {% endblock %}

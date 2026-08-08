@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
+{% block title %}Unauthorized · DigiManager{% endblock %}
+{% block page_title %}Access denied{% endblock %}
+{% block page_subtitle %}&nbsp;{% endblock %}
 
 {% block content %}
-<div class="container text-center mt-5">
-  <h1 class="display-4 text-danger">403 - Unauthorized</h1>
-  <p class="lead">You do not have permission to access this page.</p>
-  <a href="{% url 'login' %}" class="btn btn-outline-primary">Login as authorized user</a>
+<div class="card-surface p-5 text-center" style="max-width:520px;margin:40px auto;">
+  <div style="font-size:2.6rem;">🔒</div>
+  <h2 style="font-weight:800;margin-top:10px;">403 — Not authorized</h2>
+  <p style="color:var(--ink-400);">Your account role doesn't have access to that page. This attempt has been logged.</p>
+  <a href="{% url 'login' %}" class="btn btn-primary mt-2">Back to sign in</a>
 </div>
 {% endblock %}

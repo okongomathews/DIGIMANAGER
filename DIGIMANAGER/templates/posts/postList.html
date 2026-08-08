@@ -1,45 +1,37 @@
 {% extends 'base.html' %}
+{% block title %}My Posts · DigiManager{% endblock %}
+{% block page_title %}My Posts{% endblock %}
+{% block page_subtitle %}Everything you've drafted, scheduled, or published{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Manage My Posts</h2>
-  
-  {% if posts %}
-  <div class="card border-primary">
-    <div class="card-header bg-primary text-white">All My Posts</div>
-    <div class="card-body p-0">
-      <table class="table table-striped mb-0">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Scheduled Time</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for post in posts %}
-          <tr>
-            <td>{{ post.title }}</td>
-            <td>{{ post.status }}</td>
-            <td>{{ post.scheduled_time|default:"—" }}</td>
-            <td>
-              <a href="{% url 'viewPost' post.id %}" class="btn btn-sm btn-outline-primary">View</a>
-              {% if post.user == user %}
-              <a href="{% url 'editPost' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-              <form method="POST" action="{% url 'deletePost' post.id %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this post?');">Delete</button>
-              </form>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% else %}
-  <p>You haven't created any posts yet.</p>
-  {% endif %}
+{% if posts %}
+<div class="card-surface" style="overflow:hidden;">
+  <table class="data-table">
+    <thead>
+      <tr><th>Content</th><th>Status</th><th>Scheduled time</th><th style="width:220px;">Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td>{{ post.content|truncatechars:60 }}</td>
+        <td><span class="badge-soft">{{ post.status }}</span></td>
+        <td>{{ post.scheduled_time|default:"—" }}</td>
+        <td>
+          <a href="{% url 'viewPost' post.id %}" class="btn btn-sm btn-outline-secondary">View</a>
+          {% if post.user == user %}
+          <a href="{% url 'editPost' post.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          <form method="POST" action="{% url 'deletePost' post.id %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this post?');">Delete</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% else %}
+<div class="card-surface p-5 text-center text-muted">You haven't created any posts yet.</div>
+{% endif %}
 {% endblock %}

@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% block title %}Caption Detail · DigiManager{% endblock %}
+{% block page_title %}Caption Detail{% endblock %}
+{% block page_subtitle %}&nbsp;{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <h3>Your Prompt</h3>
+<div class="card-surface p-4" style="max-width:560px;">
+  <h6 style="font-weight:700;">Your prompt</h6>
   <p>{{ prompt.prompt }}</p>
-  <h3>Generated Caption</h3>
-  <div class="alert alert-success">
-    {{ prompt.generated_caption }}
-  </div>
-  <a href="{% url 'generateCaption' %}" class="btn btn-secondary">Try another</a>
+  <h6 style="font-weight:700;">Generated caption</h6>
+  <div class="alert alert-success">{{ prompt.generated_caption }}</div>
+  <a href="{% url 'contentgen_generateCaption' %}" class="btn btn-outline-secondary">Try another</a>
 </div>
 {% endblock %}

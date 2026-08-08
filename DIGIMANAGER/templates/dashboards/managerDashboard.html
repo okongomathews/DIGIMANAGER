@@ -1,30 +1,53 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
+{% block title %}Manager Dashboard · DigiManager{% endblock %}
+{% block page_title %}Manager Overview{% endblock %}
+{% block page_subtitle %}Approvals and scheduled content{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Manager Dashboard</h2>
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fff3df;color:var(--amber);">⏳</div>
+    <div class="kpi-value">{{ scheduled_posts.count }}</div>
+    <div class="kpi-label">Awaiting publish</div>
+  </div>
+</div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card border-danger mb-3">
-        <div class="card-header bg-danger text-white">Approve Posts</div>
-        <div class="card-body">
-          <p>Review and approve content from creators before it goes live.</p>
-          <a href="{% url 'approvePosts' %}" class="btn btn-danger btn-sm">Review Content</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card border-success mb-3">
-        <div class="card-header bg-success text-white">Analytics</div>
-        <div class="card-body">
-          <p>Track engagement and content performance across platforms.</p>
-          <a href="{% url 'analyticsDashboard' %}" class="btn btn-success btn-sm">View Analytics</a>
-        </div>
-      </div>
+<div class="section-heading"><h2>Quick actions</h2></div>
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card-surface p-4 h-100">
+      <div class="badge-soft mb-2">Review</div>
+      <h5 style="font-weight:700;">Approve Posts</h5>
+      <p style="color:var(--ink-400);font-size:0.87rem;">Review and approve creator content before it goes live.</p>
+      <a href="{% url 'approvePosts' %}" class="btn btn-primary btn-sm mt-2">Review content</a>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="card-surface p-4 h-100">
+      <div class="badge-soft mb-2">Insights</div>
+      <h5 style="font-weight:700;">Analytics</h5>
+      <p style="color:var(--ink-400);font-size:0.87rem;">Engagement and content performance across platforms.</p>
+      <a href="{% url 'analyticsDashboard' %}" class="btn btn-primary btn-sm mt-2">View analytics</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-heading"><h2>Due &amp; overdue for publish</h2></div>
+<div class="card-surface" style="overflow:hidden;">
+  <table class="data-table">
+    <thead><tr><th>Author</th><th>Platform</th><th>Scheduled for</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for post in scheduled_posts %}
+      <tr>
+        <td>{{ post.user.username }}</td>
+        <td>{{ post.platform.get_name_display }}</td>
+        <td>{{ post.scheduled_time|date:"M j, Y H:i" }}</td>
+        <td><span class="badge-soft">{{ post.status }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted py-4">Nothing pending — you're caught up.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

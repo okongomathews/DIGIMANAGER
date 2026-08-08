@@ -1,57 +1,38 @@
 {% extends 'base.html' %}
-{% block title %}Analytics Dashboard{% endblock %}
+{% block title %}Analytics · DigiManager{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block page_subtitle %}Content performance across accounts and platforms{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">📊 Analytics Dashboard</h2>
-
-  <!-- Main Charts -->
-  <div class="row mb-5">
+<div class="row g-3 mb-2">
     <div class="col-md-6">
-      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
-        <h5 class="card-title text-center">Post Status Distribution</h5>
+      <div class="card-surface p-4">
+        <h6 style="font-weight:700;margin-bottom:14px;">Post Status Distribution</h6>
         <canvas id="statusChart"></canvas>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
-        <h5 class="card-title text-center">Monthly Post Trends</h5>
+      <div class="card-surface p-4">
+        <h6 style="font-weight:700;margin-bottom:14px;">Monthly Post Trends</h6>
         <canvas id="monthlyChart"></canvas>
       </div>
     </div>
-  </div>
+</div>
 
-  <!-- Platform-Specific Charts -->
-  <div class="row mb-5">
+<div class="row g-3 mt-1">
     <div class="col-md-6">
-      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
-        <h5 class="card-title text-center">Platform Post Distribution</h5>
+      <div class="card-surface p-4">
+        <h6 style="font-weight:700;margin-bottom:14px;">Platform Post Distribution</h6>
         <canvas id="platformChart"></canvas>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card shadow-sm p-3 mb-4 bg-white rounded">
-        <h5 class="card-title text-center">Platform Post Trends</h5>
+      <div class="card-surface p-4">
+        <h6 style="font-weight:700;margin-bottom:14px;">Platform Post Trends</h6>
         <canvas id="platformTrendsChart"></canvas>
       </div>
     </div>
-  </div>
-
-  <!-- Future Placeholder Cards -->
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card p-3 shadow-sm">
-        <h6 class="text-muted">🔄 Top Platforms (Coming Soon)</h6>
-        <p class="text-secondary">Analytics for platform-wise performance will be shown here.</p>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card p-3 shadow-sm">
-        <h6 class="text-muted">👤 Active Creators (Coming Soon)</h6>
-        <p class="text-secondary">You'll soon see the most productive content creators.</p>
-      </div>
-    </div>
-  </div>
+</div>
 
   <!-- Hidden JSON-safe data for Chart.js -->
   {{ status_labels|json_script:"status-labels" }}
@@ -65,7 +46,6 @@
 
   {{ platform_trend_labels|json_script:"platform-trend-labels" }}
   {{ platform_trend_data|json_script:"platform-trend-data" }}
-</div>
 {% endblock %}
 
 {% block extra_scripts %}

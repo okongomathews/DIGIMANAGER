@@ -1,20 +1,47 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 
-{% block content %}
-<div class="container mt-5">
-  <h2>Login</h2>
+{% block title %}Sign in · DigiManager{% endblock %}
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
+{% block guest_content %}
+<div class="auth-shell">
+  <div class="auth-visual">
+    <div>
+      <div class="app-brand" style="padding:0;margin-bottom:40px;">
+        <span class="mark">DM</span>
+        <span>DigiManager</span>
+      </div>
+      <h1 style="font-size:2.1rem;font-weight:800;max-width:420px;line-height:1.25;">
+        One console for every account, role, and social channel you manage.
+      </h1>
+      <p style="color:rgba(255,255,255,0.65);max-width:420px;margin-top:14px;font-size:0.95rem;">
+        Role-based access, a full audit trail, and brute-force-aware login —
+        built to the standard a client-facing account platform needs.
+      </p>
+    </div>
+    <div class="stat-row">
+      <div><div class="num">RBAC</div><div class="lbl">Admin · Manager · Creator</div></div>
+      <div><div class="num">100%</div><div class="lbl">Actions audited</div></div>
+      <div><div class="num">2FA</div><div class="lbl">Foundation ready</div></div>
+    </div>
+  </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Login</button>
-  </form>
+  <div class="auth-form-pane">
+    <div class="auth-card">
+      <h2 style="font-weight:800;font-size:1.4rem;margin-bottom:4px;">Welcome back</h2>
+      <p style="color:var(--ink-400);font-size:0.9rem;margin-bottom:24px;">Sign in to your DigiManager workspace</p>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary w-100 mt-2">Sign in</button>
+      </form>
+
+      <p style="text-align:center;margin-top:22px;font-size:0.87rem;color:var(--ink-400);">
+        Don't have an account? <a href="{% url 'register' %}" style="color:var(--indigo);font-weight:600;">Create one</a>
+      </p>
+    </div>
+  </div>
 </div>
 {% endblock %}

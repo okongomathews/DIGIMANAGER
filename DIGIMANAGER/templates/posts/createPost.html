@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% block title %}New Post · DigiManager{% endblock %}
+{% block page_title %}Create &amp; Schedule a Post{% endblock %}
+{% block page_subtitle %}Draft content, generate an AI image, then save{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Create and Schedule a New Post</h2>
-
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="row">
+    <div class="row g-3">
       <!-- Form Side -->
       <div class="col-md-6">
+        <div class="card-surface p-4">
         {{ form|crispy }}
 
         <!-- Hidden field to hold AI-generated image URL -->
@@ -18,33 +19,31 @@
         <!-- AI Image Generator Controls -->
         <div class="form-group mt-3">
           <label for="model-select">Choose AI Model:</label>
-          <select id="model-select" class="form-control">
+          <select id="model-select" class="form-select">
             <option value="dalle">DALL·E</option>
             <option value="stablediffusion">Stable Diffusion</option>
             <option value="deepai">DeepAI</option>
           </select>
         </div>
 
-        <button type="button" class="btn btn-outline-info mt-2" id="generate-image-btn">
+        <button type="button" class="btn btn-outline-secondary mt-3" id="generate-image-btn">
           Generate Image with AI
         </button>
 
         <button type="submit" class="btn btn-primary mt-3">Save Draft</button>
+        </div>
       </div>
 
       <!-- Live Preview Side -->
       <div class="col-md-6">
-        <div class="card border-info">
-          <div class="card-header bg-info text-white">Live Preview</div>
-          <div class="card-body">
-            <h5 class="card-title" id="preview-caption">Your caption will appear here...</h5>
-            <img id="preview-image" src="#" alt="Image Preview" class="img-fluid d-none mt-3"/>
-          </div>
+        <div class="card-surface p-4">
+          <div class="badge-soft mb-2">Live preview</div>
+          <h5 class="card-title" id="preview-caption" style="font-weight:600;">Your caption will appear here...</h5>
+          <img id="preview-image" src="#" alt="Image Preview" class="img-fluid rounded d-none mt-3"/>
         </div>
       </div>
     </div>
   </form>
-</div>
 
 <!-- Scripts -->
 <script>

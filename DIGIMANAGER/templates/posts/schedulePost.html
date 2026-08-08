@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% block title %}Schedule Post · DigiManager{% endblock %}
+{% block page_title %}Schedule Post{% endblock %}
+{% block page_subtitle %}"{{ post.content|truncatechars:50 }}"{% endblock %}
 
-{% block title %}Schedule Post{% endblock %}
 {% block content %}
-<div class="container mt-5">
-  <h2>Schedule Post: "{{ post.content|truncatechars:50 }}"</h2>
+<div class="card-surface p-4" style="max-width:520px;">
   <form method="POST">
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-success">Schedule</button>
-    <a href="{% url 'creatorDashboard' %}" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">Schedule</button>
+    <a href="{% url 'creatorDashboard' %}" class="btn btn-outline-secondary">Cancel</a>
   </form>
 </div>
 {% endblock %}

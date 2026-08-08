@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}User Directory · DigiManager{% endblock %}
+{% block page_title %}User Directory{% endblock %}
+{% block page_subtitle %}Manage roles, status, and access for every account{% endblock %}
+
+{% block content %}
+<form method="get" class="d-flex gap-2 mb-3">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search username…" class="form-control form-control-sm" style="max-width:220px;">
+  <select name="role" class="form-select form-select-sm" style="max-width:200px;">
+    <option value="">All roles</option>
+    {% for value, label in role_choices %}
+      <option value="{{ value }}" {% if value == active_role %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-outline-secondary btn-sm">Filter</button>
+</form>
+
+<div class="card-surface" style="overflow:hidden;">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Department</th>
+        <th>Last login</th>
+        <th style="width:280px;">Update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td style="display:flex;align-items:center;gap:10px;">
+          <span class="avatar-chip">{{ u.username|slice:":2"|upper }}</span>
+          <div>
+            <div style="font-weight:600;">{{ u.username }}</div>
+            <div class="text-muted" style="font-size:0.78rem;">{{ u.email|default:"no email" }}</div>
+          </div>
+        </td>
+        <td><span class="role-pill {{ u.role }}">{{ u.role|default:"—" }}</span></td>
+        <td><span class="role-pill status-{{ u.profile.status|default:'active' }}">{{ u.profile.get_status_display|default:"Active" }}</span></td>
+        <td>{{ u.profile.department|default:"—" }}</td>
+        <td>{{ u.last_login|timesince|default:"never" }}{% if u.last_login %} ago{% endif %}</td>
+        <td>
+          <form method="post" action="{% url 'update_account' u.id %}" class="d-flex gap-1">
+            {% csrf_token %}
+            <select name="role" class="form-select form-select-sm">
+              {% for value, label in role_choices %}
+                <option value="{{ value }}" {% if value == u.role %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+            <select name="status" class="form-select form-select-sm">
+              <option value="active" {% if u.profile.status == 'active' %}selected{% endif %}>Active</option>
+              <option value="suspended" {% if u.profile.status == 'suspended' %}selected{% endif %}>Suspended</option>
+              <option value="pending" {% if u.profile.status == 'pending' %}selected{% endif %}>Pending</option>
+            </select>
+            <button class="btn btn-sm btn-primary">Save</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No accounts match those filters.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

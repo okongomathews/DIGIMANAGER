@@ -1,66 +1,93 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Admin Dashboard · DigiManager{% endblock %}
+{% block page_title %}Admin Overview{% endblock %}
+{% block page_subtitle %}Platform-wide health, accounts and content{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">Admin Dashboard</h2>
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:var(--indigo-100);color:var(--indigo-600);">👤</div>
+    <div class="kpi-value">{{ users.count }}</div>
+    <div class="kpi-label">Total accounts</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#e7f9f0;color:var(--green);">📝</div>
+    <div class="kpi-value">{{ posts.count }}</div>
+    <div class="kpi-label">Total posts</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fff3df;color:var(--amber);">⏱</div>
+    <div class="kpi-value">{{ scheduled_count|default:0 }}</div>
+    <div class="kpi-label">Scheduled posts</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fdeaea;color:var(--rose);">🚨</div>
+    <div class="kpi-value">{{ failed_logins_today|default:0 }}</div>
+    <div class="kpi-label">Failed logins (24h)</div>
+  </div>
+</div>
 
-  <div class="row">
-    <!-- Manage Users -->
-    <div class="col-md-4">
-      <div class="card border-primary mb-3">
-        <div class="card-header bg-primary text-white">Manage Users</div>
-        <div class="card-body">
-          <p>Register or deactivate users, assign roles, and view user statistics.</p>
-          <a href="{% url 'admin:scheduler_customuser_changelist' %}" class="btn btn-primary btn-sm">Go to User Management</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Analytics -->
-    <div class="col-md-4">
-      <div class="card border-success mb-3">
-        <div class="card-header bg-success text-white">View Analytics</div>
-        <div class="card-body">
-          <p>View content performance, engagement metrics, and platform statistics.</p>
-          <a href="{% url 'analyticsDashboard' %}" class="btn btn-success btn-sm">View Analytics</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Platform Settings -->
-    <div class="col-md-4">
-      <div class="card border-info mb-3">
-        <div class="card-header bg-info text-white">Platform Settings</div>
-        <div class="card-body">
-          <p>Configure platforms and schedule automation.</p>
-          <a href="{% url 'managePlatforms' %}" class="btn btn-info btn-sm">Manage Platforms</a>
-        </div>
-      </div>
+<div class="section-heading">
+  <h2>Quick actions</h2>
+</div>
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card-surface p-4 h-100">
+      <div class="badge-soft mb-2">Accounts</div>
+      <h5 style="font-weight:700;">User Directory</h5>
+      <p style="color:var(--ink-400);font-size:0.87rem;">Assign roles, suspend accounts, and audit who has access.</p>
+      <a href="{% url 'account_directory' %}" class="btn btn-primary btn-sm mt-2">Manage accounts</a>
     </div>
   </div>
-
-  <!-- Export Reports -->
-  <div class="row mt-4">
-    <div class="col-md-6">
-      <div class="card border-warning mb-3">
-        <div class="card-header bg-warning text-dark">📄 Export Reports</div>
-        <div class="card-body">
-          <p>Download all post data in Excel or PDF format for review or backups.</p>
-          <a href="{% url 'export_posts_excel' %}" class="btn btn-outline-success me-2">📤 Export to Excel</a>
-          <a href="{% url 'export_posts_pdf' %}" class="btn btn-outline-danger">📄 Export to PDF</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Future Feature -->
-    <div class="col-md-6">
-      <div class="card border-secondary mb-3">
-        <div class="card-header bg-secondary text-white">📌 Quick Stats (Coming Soon)</div>
-        <div class="card-body">
-          <p>Quick insights on top platforms, post engagement, and active users will be added here.</p>
-        </div>
-      </div>
+  <div class="col-md-4">
+    <div class="card-surface p-4 h-100">
+      <div class="badge-soft mb-2">Insights</div>
+      <h5 style="font-weight:700;">Analytics</h5>
+      <p style="color:var(--ink-400);font-size:0.87rem;">Content performance and platform distribution.</p>
+      <a href="{% url 'analyticsDashboard' %}" class="btn btn-primary btn-sm mt-2">View analytics</a>
     </div>
   </div>
+  <div class="col-md-4">
+    <div class="card-surface p-4 h-100">
+      <div class="badge-soft mb-2">Security</div>
+      <h5 style="font-weight:700;">Security Center</h5>
+      <p style="color:var(--ink-400);font-size:0.87rem;">Full audit trail and login-attempt monitoring.</p>
+      <a href="{% url 'security_center' %}" class="btn btn-primary btn-sm mt-2">Open security center</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-heading">
+  <h2>Export reports</h2>
+  <span class="muted">Excel &amp; PDF, pulled live from post data</span>
+</div>
+<div class="card-surface p-4">
+  <a href="{% url 'export_posts_excel' %}" class="btn btn-outline-secondary me-2">📤 Export to Excel</a>
+  <a href="{% url 'export_posts_pdf' %}" class="btn btn-outline-secondary">📄 Export to PDF</a>
+</div>
+
+<div class="section-heading">
+  <h2>Recently onboarded accounts</h2>
+  <a href="{% url 'account_directory' %}" class="muted">View all →</a>
+</div>
+<div class="card-surface" style="overflow:hidden;">
+  <table class="data-table">
+    <thead><tr><th>User</th><th>Role</th><th>Email</th><th>Joined</th></tr></thead>
+    <tbody>
+      {% for u in users|slice:":6" %}
+      <tr>
+        <td style="display:flex;align-items:center;gap:10px;">
+          <span class="avatar-chip">{{ u.username|slice:":2"|upper }}</span> {{ u.username }}
+        </td>
+        <td><span class="role-pill {{ u.role }}">{{ u.role|default:"—" }}</span></td>
+        <td>{{ u.email|default:"—" }}</td>
+        <td>{{ u.date_joined|date:"M j, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted py-4">No accounts yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

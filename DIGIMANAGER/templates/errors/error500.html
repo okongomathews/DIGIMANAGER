@@ -1,9 +1,22 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container text-center mt-5">
-  <h1 class="display-4 text-danger">500 - Server Error</h1>
-  <p class="lead">Something went wrong on our end. Please try again later.</p>
-  <a href="{% url 'home' %}" class="btn btn-outline-danger">Return to Home</a>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>500 · DigiManager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #0b0f19; color: #fff;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; text-align: center; }
+    .code { font-size: 4rem; font-weight: 800; color: #ef4560; }
+    p { color: rgba(255,255,255,0.6); margin: 10px 0 24px; }
+    a { background: #4f5bff; color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="code">500</div>
+    <p>Something went wrong on our end. It's been logged — please try again shortly.</p>
+    <a href="/">Back to sign in</a>
+  </div>
+</body>
+</html>
