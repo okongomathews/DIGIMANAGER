@@ -165,7 +165,30 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 def login(request):
+    from accounts.models import LoginAttempt, AuditLog
+
     if request.method == 'POST':
+        submitted_username = request.POST.get('username', '')
+        threshold = getattr(settings, 'LOGIN_LOCKOUT_THRESHOLD', 5)
+        window_minutes = getattr(settings, 'LOGIN_LOCKOUT_WINDOW_MINUTES', 15)
+        window_start = timezone.now() - timedelta(minutes=window_minutes)
+
+        recent_failures = LoginAttempt.objects.filter(
+            username=submitted_username, successful=False, created_at__gte=window_start
+        ).count()
+
+        if submitted_username and recent_failures >= threshold:
+            AuditLog.objects.create(
+                user=None, username_snapshot=submitted_username,
+                action=AuditLog.Action.ACCOUNT_LOCKED,
+                detail=f"{recent_failures} failed attempts in {window_minutes}m — login temporarily blocked",
+            )
+            messages.error(
+                request,
+                f"Too many failed attempts for this account. Try again in a few minutes."
+            )
+            return render(request, 'users/login.html', {'form': AuthenticationForm()})
+
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
@@ -178,6 +201,7 @@ def login(request):
                 return redirect('creatorDashboard')
             elif user.role == 'manager':
                 return redirect('managerDashboard')
+            return redirect('profile')
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
@@ -484,11 +508,19 @@ User = get_user_model()
 def admDashboard(request):
     if request.user.role != 'admin':
         return redirect('unauthorized')
-    users = User.objects.all()
+    from accounts.models import LoginAttempt
+
+    users = User.objects.all().order_by('-date_joined')
     posts = Post.objects.all()
+    scheduled_count = posts.filter(status='scheduled').count()
+    failed_logins_today = LoginAttempt.objects.filter(
+        successful=False, created_at__gte=timezone.now() - timedelta(hours=24)
+    ).count()
     return render(request, 'dashboards/admDashboard.html', {
         'users': users,
         'posts': posts,
+        'scheduled_count': scheduled_count,
+        'failed_logins_today': failed_logins_today,
     })
 
 @login_required
