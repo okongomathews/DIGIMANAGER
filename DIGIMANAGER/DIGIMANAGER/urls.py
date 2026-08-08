@@ -32,7 +32,8 @@ urlpatterns = [
     path('admin/logout/', custom_admin_logout, name='admin_logout'),
     path('admin/', admin.site.urls),
     path('', include('scheduler.urls')),
-    path('content/', include('contentgen.urls'))
+    path('content/', include('contentgen.urls')),
+    path('', include('accounts.urls')),
 ]
 
 if settings.DEBUG:
